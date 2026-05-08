@@ -50,6 +50,17 @@ The goal is quality delivery, not just checking boxes.]]
    - [ ] All tests (unit, integration, E2E if applicable) pass successfully.
    - [ ] Test coverage meets project standards (if defined).
 
+3.5. **Article IX — Tests-First Compliance (NON-NEGOTIABLE):**
+
+   [[LLM: Article IX mandates RED→GREEN cycle. Verify via git history that
+   the test suite was committed BEFORE implementation code. This is verifiable
+   and BLOCKING — do not mark Done if violated.]]
+
+   - [ ] **Article IX:** Tests written BEFORE implementation code (verifiable via git history — test commits precede implementation commits on this branch)
+   - [ ] RED-phase verified: tests failed initially against empty implementation (red-phase commit exists)
+   - [ ] GREEN-phase achieved: same test suite passes against current implementation (green-phase commit exists)
+   - [ ] Test scenarios from story map 1:1 to test cases in code (no orphan scenarios, no inventions)
+
 4. **Functionality & Verification:**
 
    [[LLM: Did you actually run and test your code? Be specific about what you tested]]

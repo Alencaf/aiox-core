@@ -110,6 +110,32 @@ Note: We don't need every file listed - just the important ones.]]
 - [ ] Success criteria are defined
 - [ ] Special testing considerations are noted (if applicable)
 
+## 5.5. ARTICLE IX — TESTS-FIRST, PLAN-FIRST (NON-NEGOTIABLE)
+
+[[LLM: Article IX of the AIOX Constitution mandates that every story declares
+its plan and expected behavior BEFORE any code is written. Verify ALL items
+below — these are BLOCKING gates for transition to Ready/InProgress.
+
+The orchestrator (Eliel or designated agent) reviews behavior here, BEFORE
+@qa converts test scenarios into red-phase test code. This is the highest
+leverage review point in the framework.]]
+
+**Plan section (≤10 lines):**
+- [ ] **Article IX:** Plan section present (≤10 linhas) declaring files to create/modify, execution order, and dependencies
+- [ ] Plan does NOT contain long justifications, abstract design, or rejected alternatives
+- [ ] Plan declares dependencies explicitly (or "none")
+
+**Test Scenarios (Given/When/Then):**
+- [ ] **Article IX:** Test scenarios present in Given/When/Then format
+- [ ] Test scenarios cover all AC (every numbered AC has at least one corresponding scenario)
+- [ ] Each scenario has explicit Given (precondition), When (action), Then (expected outcome)
+- [ ] Test scenarios are concrete (no vague "system works correctly" wording)
+- [ ] Test scenarios are testable by @qa without further elicitation
+
+**Pre-implementation gate:**
+- [ ] Story status will not transition to InProgress until @qa commits red-phase test suite based on these scenarios
+- [ ] Orchestrator has reviewed and approved Test Scenarios (or will, before @qa codes them)
+
 ## 6. CODERABBIT INTEGRATION (CONDITIONAL)
 
 [[LLM: CONDITIONAL SECTION - Check `coderabbit_integration.enabled` in `.aiox-core/core-config.yaml`
@@ -206,6 +232,7 @@ Be pragmatic - perfect documentation doesn't exist, but it must be enough to pro
 | 3. Reference Effectiveness           | _TBD_  |        |
 | 4. Self-Containment Assessment       | _TBD_  |        |
 | 5. Testing Guidance                  | _TBD_  |        |
+| 5.5. Article IX (Tests-First, Plan-First) | _TBD_ |     |
 | 6. CodeRabbit Integration (conditional) | _TBD_ or N/A |        |
 
 **Final Assessment:**

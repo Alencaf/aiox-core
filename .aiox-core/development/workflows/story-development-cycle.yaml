@@ -33,7 +33,8 @@ workflow:
   phases:
     - phase_1: Story Creation
     - phase_2: Story Validation
-    - phase_3: Implementation
+    - phase_2_5: QA Write Tests (red-phase) — Article IX (Tests-First)
+    - phase_3: Implementation (green-phase)
     - phase_4: QA Review
 
   sequence:
@@ -68,7 +69,7 @@ workflow:
       id: validate
       phase: 2
       agent: po
-      action: Validar story (10 checks)
+      action: Validar story (10 checks + Article IX)
       requires: create
       notes: |
         Product Owner valida a story com checklist de 10 pontos:
@@ -85,25 +86,67 @@ workflow:
         - [ ] 9. Critérios de Done claros
         - [ ] 10. Alinhamento com PRD/Epic
 
+        Article IX (Tests-First, Plan-First) — BLOCKING:
+        - [ ] IX.1. Plan section present (≤10 linhas)
+        - [ ] IX.2. Test Scenarios present in Given/When/Then format
+        - [ ] IX.3. Test scenarios cover all AC
+
         Resultado:
-        - Aprovada → Status muda para "Ready"
+        - Aprovada → Status muda para "Ready" → @qa escreve testes red-phase
         - Rejeitada → Retorna para SM com feedback
 
         Critérios de sucesso:
-        - [ ] Todos os 10 checks passaram
+        - [ ] Todos os 10 checks + Article IX passaram
         - [ ] Story marcada como "Ready"
       outputs:
         - validation_report
         - story_status
-      next: implement
+      next: qa_write_tests
       on_failure: create
+
+    - step: qa_write_tests
+      id: qa_write_tests
+      phase: 2.5
+      agent: qa
+      action: Escrever testes red-phase a partir dos Test Scenarios — Article IX
+      requires: validate
+      notes: |
+        Article IX (Tests-First, NON-NEGOTIABLE) — @qa converte os Test Scenarios
+        Given/When/Then da story em código de teste executável que FALHA inicialmente.
+
+        Procedimento:
+        1. Ler seção Test Scenarios da story (Given/When/Then por AC)
+        2. Escolher framework de teste do projeto (jest/vitest/pytest/etc.)
+        3. Escrever um teste por scenario, mapeando 1:1 (não inventar cenários extras)
+        4. Rodar a suite — DEVE falhar (red-phase: implementação ainda não existe)
+        5. Commitar a suite na branch da story com mensagem clara: "test(STORY-X): red-phase suite"
+        6. Orchestrator (Eliel) revisa o COMPORTAMENTO codificado nos testes
+        7. Após aprovação, story transiciona para InProgress e @dev pode iniciar
+
+        Gate BLOCK: @dev NÃO inicia implementação sem este step concluído com:
+        - Suite commitada na branch
+        - Suite verificadamente vermelha contra implementação vazia/atual
+        - Orchestrator review aprovado
+
+        Critérios de sucesso:
+        - [ ] Suite red-phase commitada
+        - [ ] Cobertura: 1 teste mínimo por scenario, 1 scenario mínimo por AC
+        - [ ] Suite roda e falha como esperado
+        - [ ] Orchestrator aprovou comportamento codificado
+        - [ ] Story marcada como "InProgress"
+      outputs:
+        - test_suite_files
+        - red_phase_commit_hash
+        - orchestrator_approval
+      next: implement
+      on_failure: validate
 
     - step: implement_story
       id: implement
       phase: 3
       agent: dev
-      action: Implementar story
-      requires: validate
+      action: Implementar story (green-phase) — fazer testes red passarem
+      requires: qa_write_tests
       notes: |
         Dev Agent implementa a story validada:
         - Analisa acceptance criteria

@@ -12,14 +12,21 @@ workflow:
   elicitation: advanced-elicitation
 
 agent_config:
-  editable_sections: 
+  editable_sections:
     - Status
     - Story
     - Acceptance Criteria
+    - Plan
+    - Test Scenarios
     - Tasks / Subtasks
     - Dev Notes
     - Testing
     - Change Log
+
+# Article IX (Constitution) — Tests-First, Plan-First (NON-NEGOTIABLE):
+#   - Section "plan" is required (max 10 lines) before Approved/Ready.
+#   - Section "test-scenarios" is required (Given/When/Then covering all AC) before Ready.
+#   - Story cannot transition Ready -> InProgress without red-phase tests committed.
 
 sections:
   - id: status
@@ -49,7 +56,56 @@ sections:
     elicit: true
     owner: scrum-master
     editors: [scrum-master]
-    
+
+  - id: plan
+    title: Plan
+    type: bullet-list
+    required: true
+    max_lines: 10
+    article_ix: true
+    instruction: |
+      **Article IX — Plan-First (NON-NEGOTIABLE).** Máximo 10 linhas.
+      Declare APENAS:
+        1. Arquivos a criar/modificar (path + role)
+        2. Ordem de execução (1, 2, 3...)
+        3. Dependências de outras stories ou módulos
+      NÃO incluir: justificativas longas, alternativas descartadas, design abstrato.
+      Esta seção é gate: ausente ou >10 linhas BLOQUEIA transição Approved/Ready.
+    template: |
+      1. {{file_or_action_1}}
+      2. {{file_or_action_2}}
+      3. {{file_or_action_3}}
+      Dependencies: {{dependency_list_or_none}}
+    elicit: true
+    owner: scrum-master
+    editors: [scrum-master]
+
+  - id: test-scenarios
+    title: Test Scenarios
+    type: structured-list
+    required: true
+    format: given-when-then
+    article_ix: true
+    instruction: |
+      **Article IX — Tests-First (NON-NEGOTIABLE).** Um cenário Given/When/Then por AC, no mínimo.
+      Test scenarios cover all AC — toda AC numerada DEVE ter pelo menos um cenário correspondente.
+      Estes cenários são insumo direto para @qa converter em suite red-phase ANTES de @dev iniciar implementação.
+      Orchestrator revisa COMPORTAMENTO aqui (último gate antes de existir código).
+      Ausência ou cobertura incompleta BLOQUEIA transição para Ready.
+    template: |
+      ### Scenario 1 (covers AC #1)
+      **Given** {{precondition}}
+      **When** {{action}}
+      **Then** {{expected_outcome}}
+
+      ### Scenario 2 (covers AC #2)
+      **Given** {{precondition}}
+      **When** {{action}}
+      **Then** {{expected_outcome}}
+    elicit: true
+    owner: scrum-master
+    editors: [scrum-master, qa-agent]
+
   - id: tasks-subtasks
     title: Tasks / Subtasks
     type: bullet-list
