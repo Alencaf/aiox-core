@@ -190,6 +190,17 @@ cross_cutting:
     voice_dna_required: true
     thinking_dna_required: true
 
+  tdd_discipline:
+    description: "Article IX (Tests-First, Plan-First) compliance audit"
+    command: "*optimize-tdd-discipline"
+    task_file: "tasks/optimize-tdd-discipline.md"
+    enforces:
+      - "Constitution: .aiox-core/constitution.md (Article IX)"
+      - "Templates: story-tmpl.yaml (sections plan + test-scenarios)"
+      - "Workflow: story-development-cycle.yaml (step qa_write_tests)"
+      - "Checklists: story-draft-checklist.md + story-dod-checklist.md"
+      - "Task: qa-write-tests-from-story.md"
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SETTINGS
 # ─────────────────────────────────────────────────────────────────────────────
